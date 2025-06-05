@@ -1,20 +1,17 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib';
 import { NextLevelCdkWithLocalstackStack } from '../lib/next-level-cdk-with-localstack-stack';
+import { OrganizationalPropsInjector } from '../lib/blueprints/organizational';
+import { MyFunctionPropsInjector } from '../lib/blueprints/function-props-injector';
+import { App, Aspects } from 'aws-cdk-lib';
+import { PropsInjectorChecker } from '../lib/aspects/props-injector-checker';
+import { EnforceFunctionProperties } from '../lib/aspects/enforce-function-properties';
 
-const app = new cdk.App();
-new NextLevelCdkWithLocalstackStack(app, 'NextLevelCdkWithLocalstackStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
-
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+const app = new App({
+  propertyInjectors: OrganizationalPropsInjector,
 });
+const stack = new NextLevelCdkWithLocalstackStack(app, 'NextLevelCdkWithLocalstackStack', {
+  propertyInjectors: [new MyFunctionPropsInjector()],
+});
+
+Aspects.of(app).add(new PropsInjectorChecker());
+Aspects.of(stack).add(new EnforceFunctionProperties);

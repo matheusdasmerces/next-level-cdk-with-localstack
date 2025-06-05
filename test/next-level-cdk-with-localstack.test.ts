@@ -1,17 +1,50 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as NextLevelCdkWithLocalstack from '../lib/next-level-cdk-with-localstack-stack';
+import * as cdk from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { NextLevelCdkWithLocalstackStack } from '../lib/next-level-cdk-with-localstack-stack';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { OrganizationalPropsInjector } from '../lib/blueprints/organizational';
+import { MyFunctionPropsInjector } from '../lib/blueprints/function-props-injector';
+import { Aspects } from 'aws-cdk-lib';
+import { PropsInjectorChecker } from '../lib/aspects/props-injector-checker';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/next-level-cdk-with-localstack-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new NextLevelCdkWithLocalstack.NextLevelCdkWithLocalstackStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+describe('Fine-Grained Asssertions', () => {
+    const app = new cdk.App({
+        propertyInjectors: OrganizationalPropsInjector
+    });
+    const stack = new NextLevelCdkWithLocalstackStack(app, 'MyTestStack', {
+        propertyInjectors: [new MyFunctionPropsInjector()]
+    });
+    const template = Template.fromStack(stack);
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+    Aspects.of(app).add(new PropsInjectorChecker());
+
+    describe('CloudWatch Resources', () => {
+        it('should create a LogGroup with the correct properties', () => {
+            template.hasResource('AWS::Logs::LogGroup', {
+                Type: 'AWS::Logs::LogGroup',
+                DeletionPolicy: 'Delete',
+                Properties: {
+                    LogGroupName: '/aws/lambda/my-log-group',
+                    RetentionInDays: RetentionDays.ONE_WEEK,
+                }
+            });
+        });
+    });
+
+    describe('Lambda Function', () => {
+        it('should create a Lambda Function with the correct properties', () => {
+            template.hasResource('AWS::Lambda::Function', {
+                Type: 'AWS::Lambda::Function',
+                Properties: {
+                    Handler: 'handler',
+                    Runtime: 'nodejs22.x',
+                    MemorySize: 128,
+                    Timeout: 30,
+                    Code: {
+                        ZipFile: Match.anyValue(),
+                    },
+                }
+            });
+        });
+    });
 });
