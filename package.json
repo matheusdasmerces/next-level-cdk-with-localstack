@@ -7,8 +7,10 @@
   "scripts": {
     "test:unit": "jest ./test/unit",
     "localstack:start": "localstack start",
-    "localstack:stop": "localstack stop",
-    "test:integration": "cdklocal bootstrap && cdklocal deploy --require-approval never && jest ./test/integration",
+    "localstack:bootstrap": "cdklocal bootstrap",
+    "localstack:deploy": "cdklocal deploy --require-approval never",
+    "localstack:destroy": "cdklocal destroy --force",
+    "test:integration": "jest ./test/integration",
     "test": "jest",
     "build": "tsc",
     "watch": "tsc -w",
