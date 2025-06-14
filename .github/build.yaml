@@ -1,0 +1,52 @@
+name: CI - Fine-Graind Assertions and Integration Tests with LocalStack
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fine-grained-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run fine-grained tests
+        run: npm run test:unit
+
+  integration-tests:
+    needs: fine-grained-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start LocalStack
+        uses: LocalStack/setup-localstack@v0.2.3
+        with:
+          image-tag: 'latest'
+          use-pro: 'true'
+        env:
+          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+
+      - name: Run fine-grained tests
+        run: npm run test:integration
