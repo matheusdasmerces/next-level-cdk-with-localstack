@@ -8,11 +8,15 @@ export class LogGroupPropsInjector implements IPropertyInjector {
         this.constructUniqueId = LogGroup.PROPERTY_INJECTION_ID;
     }
 
+    protected getRetentionPeriod(): RetentionDays {
+        return RetentionDays.ONE_WEEK; // Default retention period
+    }
+
     public inject(originalProps: LogGroupProps, _context: InjectionContext): LogGroupProps {
         return {
             ...originalProps,
             removalPolicy: RemovalPolicy.DESTROY,
-            retention: RetentionDays.ONE_WEEK,
+            retention: this.getRetentionPeriod(),
         };
     }
 }

@@ -1,11 +1,12 @@
 import { Duration, InjectionContext, IPropertyInjector } from "aws-cdk-lib";
-import { FunctionProps, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { FunctionProps, Runtime } from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
-export class MyFunctionPropsInjector implements IPropertyInjector {
+export class MyNodejsFunctionPropsInjector implements IPropertyInjector {
     public readonly constructUniqueId: string;
 
     constructor() {
-        this.constructUniqueId = Function.PROPERTY_INJECTION_ID;
+        this.constructUniqueId = NodejsFunction.PROPERTY_INJECTION_ID;
     }
 
     public inject(originalProps: FunctionProps, _context: InjectionContext): FunctionProps {
