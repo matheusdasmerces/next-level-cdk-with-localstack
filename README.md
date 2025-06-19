@@ -24,7 +24,10 @@ In this session, we covered:
 ## 🛠️ Technologies Used
 
 - [AWS CDK](https://aws.amazon.com/cdk/)
+    - [Constructs](https://docs.aws.amazon.com/cdk/v2/guide/constructs.html)
+    - [Blueprints](https://docs.aws.amazon.com/cdk/v2/guide/blueprints.html)
+    - [Aspects](https://docs.aws.amazon.com/cdk/v2/guide/aspects.html)
+    - [Assertions Library](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.assertions-readme.html)
 - [TypeScript](https://www.typescriptlang.org/)
-- [AWS CDK Assertions Library](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.assertions-readme.html)
 - [LocalStack](https://localstack.cloud/)
 - [Jest](https://jestjs.io/) for assertions and tests
