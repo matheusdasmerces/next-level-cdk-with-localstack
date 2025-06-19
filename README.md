@@ -1,6 +1,6 @@
 # Next-Level Infrastructure as Code with AWS CDK LocalStack
 
-Welcome to the repository for the talk: **"Level Up Your AWS CDK Projects with LocalStack"**.
+Welcome to the repository for the talk: **"Next-Level Infrastructure as Code with AWS CDK LocalStack"**.
 
 ## 🎯 Talk Overview
 
